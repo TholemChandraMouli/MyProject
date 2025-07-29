@@ -818,4 +818,5 @@ def export_pdf():
         app.logger.error(f"Error in export_pdf: {e}\n{traceback.format_exc()}")
         return f"An error occurred while generating the PDF: {str(e)}. Please check the server logs for more details.", 500
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
+
