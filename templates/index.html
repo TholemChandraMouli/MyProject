@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stock Dashboard - Finnhub</title>
+    
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    
+    {# Bootstrap 5 CSS and JS should be included first for proper cascade #}
+    {# This line will include Bootstrap 5 CSS and JS from bootstrap_links.html #}
+    {% include 'bootstrap_links.html' %} 
+
+    {# Your custom style.css should come after Bootstrap to easily override its styles if needed #}
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    
+  <div class="container mt-3">
+  <div class="row">
+    <div class="col-12 col-md-8 mx-auto text-center">
+       <h1 class="mb-2">Live Stock Insights</h1> {# mb-2 adds margin-bottom #}
+        <p class="header-description lead">Track real-time stock prices and key metrics for selected companies.</p> {# lead makes text larger #} 
+    </div>
+  </div>
+</div>
+
+      <div class="w-100 text-end mt-3 pe-3">
+  <a href="/calculator" class="btn btn-info mb-2" style="max-width: 500px;">
+    Dividend Growth Calculator
+  </a>
+</div>
+<header class="container-fluid py-3 position-relative">
+
+ <div class="position-fixed top-0 end-0 mt-3 me-3 z-3">
+  <div class="theme-switch-wrapper d-inline-flex align-items-center">
+    <label class="theme-switch me-2" for="checkbox">
+      <input type="checkbox" id="checkbox" />
+      <div class="slider round"></div>
+    </label>
+    <em class="text-white">Dark Mode</em>
+  </div>
+</div>
+
+
+
+
+      </div>
+    </div>
+</header>
+  <div id="datetime" class="container text-center mb-3"></div> {# Added container, text-center, mb-3 #}
+  <script>
+    function updateDateTime() {
+      const now = new Date();
+      const options = {
+        weekday: 'short',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      };
+      document.getElementById('datetime').textContent = now.toLocaleString('en-US', options);
+    }
+
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+  </script>
+    <main class="container mt-4"> {# Added container and mt-4 #}
+        <section id="stock-container" class="row"> {# Changed to row for Bootstrap grid #}
+            <div class="col-12 text-center"> {# Added a column and center text for the message #}
+                <p class="loading-message">Loading stock data... Please wait a moment.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            setDarkMode(true);
+            document.getElementById('checkbox').checked = true;
+        }
+
+        document.getElementById('checkbox').addEventListener('change', function() {
+            setDarkMode(this.checked);
+            localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+        });
+
+        async function fetchAndDisplayStocks() {
+            try {
+                const response = await fetch('/api/stocks');
+                const stocks = await response.json();
+                const stockContainer = document.getElementById('stock-container');
+                stockContainer.innerHTML = ''; // Clear loading message or previous stocks
+
+                if (Object.keys(stocks).length === 0) {
+                    stockContainer.innerHTML = '<p class="loading-message">No stock data available yet. Backend is fetching data or API key might be invalid.</p>';
+                    return;
+                }
+
+                const sortedSymbols = Object.keys(stocks).sort(); // Sort symbols alphabetically
+
+                sortedSymbols.forEach(symbol => {
+                    const data = stocks[symbol];
+                    const stockCardCol = document.createElement('div');
+                    // Bootstrap grid classes:
+                    // col-12: Takes full width on extra small screens (mobile)
+                    // col-md-6: Takes half width on medium screens and up (tablets/laptops)
+                    // col-lg-4: Takes one-third width on large screens and up (desktops)
+                    // mb-4: Adds margin-bottom for spacing between cards
+                    stockCardCol.className = 'col-12 col-md-6 col-lg-4 mb-4'; 
+
+                    const stockCard = document.createElement('div');
+                    stockCard.className = 'card h-100 shadow-sm'; // Bootstrap card class, h-100 for equal height, shadow for subtle shadow
+
+                    const currentPrice = parseFloat(data.current_price);
+                    const prevClosePrice = parseFloat(data.prev_close_price);
+                    const changeValue = currentPrice - prevClosePrice;
+                    const percentageChange = prevClosePrice !== 0 ? (changeValue / prevClosePrice * 100) : 0; 
+
+                    const changeClass = changeValue >= 0 ? 'text-success' : 'text-danger'; // Bootstrap text colors
+                    const arrowIcon = changeValue >= 0 ? '▲' : '▼'; // Up or Down arrow
+
+                    stockCard.innerHTML = `
+                        <div class="card-body"> {# Changed to card-body #}
+                            <div class="d-flex align-items-center mb-3"> {# Flexbox for logo and text alignment #}
+                                <img src="${data.logo}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/cccccc/ffffff?text=${data.symbol.substring(0,2)}';" alt="${data.company_name} Logo" class="company-logo me-3 rounded-circle"> {# me-3 for margin, rounded-circle for round logo #}
+                                <div>
+                                    <h5 class="card-title mb-0">${data.company_name}</h5> {# card-title #}
+                                    <p class="card-subtitle text-muted">${data.symbol}</p> {# card-subtitle #}
+                                </div>
+                            </div>
+                            <h4 class="card-text mb-1">$${currentPrice.toFixed(2)}</h4> {# card-text, mb-1 #}
+                            <p class="card-text ${changeClass} fs-5"> {# fs-5 for font-size #}
+                                ${arrowIcon} ${changeValue.toFixed(2)} (${percentageChange.toFixed(2)}%)
+                            </p>
+                            <hr class="my-3"> {# Horizontal rule with margin #}
+                            <div class="row row-cols-2 g-2"> {# Responsive grid for price details #}
+                                <div class="col">Open: <span class="fw-bold">$${parseFloat(data.open_price).toFixed(2)}</span></div>
+                                <div class="col">High: <span class="fw-bold">$${parseFloat(data.high_price).toFixed(2)}</span></div>
+                                <div class="col">Low: <span class="fw-bold">$${parseFloat(data.low_price).toFixed(2)}</span></div>
+                                <div class="col">Close: <span class="fw-bold">$${parseFloat(data.prev_close_price).toFixed(2)}</span></div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light text-muted small"> {# card-footer with Bootstrap bg and text classes #}
+                            Last Update: ${new Date(data.timestamp).toLocaleTimeString()}
+                        </div>
+                    `;
+                    stockCardCol.appendChild(stockCard);
+                    stockContainer.appendChild(stockCardCol);
+                });
+
+            } catch (error) {
+                console.error("Error fetching or displaying stock data:", error);
+                document.getElementById('stock-container').innerHTML = '<div class="col-12 text-center"><p class="error-message">Error loading stock data. Please check console for details.</p></div>';
+            }
+        }
+
+        fetchAndDisplayStocks();
+        setInterval(fetchAndDisplayStocks, 10000); // Update every 10 seconds
+    </script>
+</body>
+</html>

@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced DRIP Calculator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        
+        /* ==================================== */
+        /* 1. CSS Variables and Defaults */
+        /* ==================================== */
+
+        /* Light Mode Variables (Default - White background, Black text, Orange accents) */
+        :root {
+            --font-family: 'Inter', sans-serif;
+            --background-color: #FFFFFF; /* White background */
+            --text-color: #333333; /* Dark Grey/Near Black text */
+            --header-bg: #FF8C00; /* Dark Orange */
+            --header-text: #FFFFFF; /* White */
+            --container-bg: #FFFFFF; /* White */
+            --card-bg: #FFFFFF; /* White */
+            --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            --border-color: #E0E0E0; /* Light Grey */
+            --input-bg: #FDFDFD; /* Off-White */
+            --input-border: #DCDCDC; /* Light Grey */
+            --button-primary-bg: #FFA500; /* Orange */
+            --button-primary-hover-bg: #CC8400; /* Darker Orange */
+            --button-secondary-bg: #6C757D; /* Bootstrap default secondary for neutrality */
+            --button-secondary-hover-bg: #5A6268;
+            --positive-color: #28a745; /* Green */
+            --negative-color: #dc3545; /* Red */
+            --info-color: #FFBF00; /* Amber Orange for info buttons */
+            --table-header-bg: #F8F9FA; /* Very Light Grey */
+            --table-striped-odd: #F2F2F2; /* Light Grey */
+            --error-bg: #FFEBEB;
+            --error-text: #DC3545;
+        }
+
+        /* Dark Mode Variables (Black background, White text, Orange accents) */
+        body.dark-mode {
+            --background-color: #1A1A1A; /* Dark Black */
+            --text-color: #F0F0F0; /* Off-White */
+            --header-bg: #333333; /* Dark Grey/Black */
+            --header-text: #FFA500; /* Orange */
+            --container-bg: #222222; /* Slightly Lighter Black */
+            --card-bg: #282828; /* Another shade of Black */
+            --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+            --border-color: #444444; /* Dark Grey */
+            --input-bg: #333333; /* Dark Grey */
+            --input-border: #555555; /* Mid Grey */
+            --button-primary-bg: #FFA500; /* Orange */
+            --button-primary-hover-bg: #CC8400; /* Darker Orange */
+            --button-secondary-bg: #555e68; /* Keep for neutrality */
+            --button-secondary-hover-bg: #4a5158;
+            --positive-color: #2ecc71; /* Brighter green */
+            --negative-color: #e74c3c; /* Brighter red */
+            --info-color: #FFBF00; /* Amber orange for info */
+            --table-header-bg: #333333; /* Dark Grey */
+            --table-striped-odd: #282828; /* Another shade of Black */
+            --error-bg: #3a2b2b;
+            --error-text: #e74c3c;
+        }
+
+        /* ==================================== */
+        /* 2. Base Styles & Typography */
+        /* ==================================== */
+
+        body {
+            font-family: var(--font-family);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            transition: background-color 0.4s ease, color 0.4s ease;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2, h3 {
+            color: var(--header-bg); /* Use a prominent color for headings */
+            font-weight: 600;
+            margin-bottom: 25px;
+            text-align: center;
+            transition: color 0.4s ease;
+        }
+
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+            color: var(--header-text);
+        }
+
+        h1 { font-size: 2.8rem; }
+        h2 { font-size: 2.2rem; margin-top: 40px; }
+        h3 { font-size: 1.6rem; margin-top: 30px; color: var(--button-primary-bg); }
+
+        p {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        /* ==================================== */
+        /* 3. Main Container & Form Layout */
+        /* ==================================== */
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--container-bg);
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            padding: 40px;
+            margin-bottom: 40px;
+            transition: background-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px 30px; /* Row and column gap */
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0; /* Reset default margin as grid handles spacing */
+        }
+
+        .form-group label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            font-size: 0.95rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid var(--input-border);
+            padding: 12px 15px;
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+            width: 100%; /* Ensure it takes full width of its grid cell */
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .form-control:focus {
+            border-color: var(--button-primary-bg);
+            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2); /* Soft focus ring */
+            outline: none;
+        }
+
+        /* Specific styling for the ticker input with button */
+        .ticker-input-group {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end; /* Align button to bottom of input */
+        }
+
+        .ticker-input-group .form-control {
+            flex-grow: 1;
+        }
+
+        /* Select2 customization */
+        .select2-container--default .select2-selection--multiple {
+            background-color: var(--input-bg) !important;
+            border: 1px solid var(--input-border) !important;
+            border-radius: 10px !important;
+            padding: 6px 10px !important; /* Adjust padding to match other inputs */
+            min-height: 44px; /* Ensure consistent height */
+            display: flex; /* For better alignment of tags */
+            align-items: center; /* Vertically center tags */
+            flex-wrap: wrap; /* Allow tags to wrap */
+        }
+
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: var(--button-primary-bg) !important;
+            box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2) !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: var(--header-bg) !important; /* Darker tag background */
+            color: var(--header-text) !important; /* Light text for tags */
+            border: 1px solid var(--button-primary-bg) !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            margin-top: 4px !important;
+            margin-right: 5px !important;
+            font-size: 0.9rem !important;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: var(--header-text) !important;
+            margin-right: 5px !important;
+            font-size: 1.1rem !important;
+            cursor: pointer;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            padding-left: 0 !important; /* Remove default padding */
+            padding-right: 0 !important;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .select2-container--default .select2-search--inline .select2-search__field {
+            color: var(--text-color) !important;
+            height: 32px !important; /* Adjust search field height */
+            margin-top: 4px !important;
+        }
+
+        .select2-dropdown {
+            background-color: var(--input-bg) !important;
+            border: 1px solid var(--input-border) !important;
+            border-radius: 10px !important;
+            box-shadow: var(--card-shadow);
+        }
+
+        .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+            background-color: var(--button-primary-bg) !important;
+            color: white !important;
+        }
+
+        .select2-container--default .select2-results__option {
+            color: var(--text-color) !important;
+            padding: 10px 15px !important;
+        }
+
+        /* Radio buttons */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .form-check-inline {
+            margin-right: 0; /* Reset default margin */
+        }
+        .form-check-input {
+            margin-top: 0.3rem;
+            width: 1.1em;
+            height: 1.1em;
+            accent-color: var(--button-primary-bg); /* Highlight color for checked radio */
+        }
+        .form-check-label {
+            color: var(--text-color);
+            font-size: 0.95rem;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked + .form-check-label {
+            font-weight: 500;
+        }
+
+        /* Checkbox */
+        .form-check-label[for="drip_enabled"] {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .form-check-input[type="checkbox"] {
+            border-radius: 4px; /* Make checkbox slightly rounded */
+            accent-color: var(--button-primary-bg);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            font-weight: 600;
+            display: inline-flex; /* Use flex for alignment of text/icon */
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--button-primary-bg);
+            color: var(--header-text);
+            box-shadow: 0 4px 15px rgba(74, 105, 189, 0.3);
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--button-primary-hover-bg);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(74, 105, 189, 0.4);
+        }
+
+        .btn-secondary { /* For Fetch Data button */
+            background-color: var(--button-secondary-bg);
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--button-secondary-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .export-options .btn {
+            width: auto; /* Override full width for export buttons */
+            margin-top: 0;
+        }
+
+        .export-options form {
+            display: inline-block;
+            margin-right: 15px; /* Space between CSV and PDF buttons */
+        }
+
+        .btn-info { /* CSV button */
+            background-color: var(--info-color);
+            box-shadow: 0 4px 10px rgba(23, 162, 184, 0.2);
+        }
+        .btn-info:hover {
+            background-color: #138496;
+            box-shadow: 0 6px 15px rgba(23, 162, 184, 0.3);
+        }
+
+        .btn-success { /* PDF button */
+            background-color: var(--positive-color);
+            box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        /* ==================================== */
+        /* 4. Results Display */
+        /* ==================================== */
+
+        .results-section, .chart-section, .comparison-section, .export-options {
+            margin-top: 40px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background-color: var(--card-bg);
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            animation: fadeIn 0.8s ease-out; /* Fade in effect */
+        }
+
+        .results-section h3 {
+            text-align: left;
+            margin-top: 0;
+            margin-bottom: 20px;
+            color: var(--button-primary-bg);
+            transition: color 0.4s ease;
+        }
+
+        body.dark-mode .results-section h3 {
+            color: var(--header-text);
+        }
+
+        .results-section p {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .results-section p strong {
+            color: var(--header-bg); /* Make labels stand out */
+            transition: color 0.4s ease;
+        }
+        body.dark-mode .results-section p strong {
+            color: var(--header-text);
+        }
+
+        .results-section .text-end {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 20px;
+        }
+
+        /* Error message styling */
+        .alert.error-message {
+            color: var(--error-text);
+            background-color: var(--error-bg);
+            border: 1px solid var(--error-text);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        /* Table styling (for comparison and yearly breakdown) */
+        .table {
+            width: 100%;
+            margin-bottom: 1rem;
+            color: var(--text-color);
+            border-collapse: separate; /* For rounded corners */
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden; /* Ensures border-radius applies */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: color 0.4s ease;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px 10px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            font-size: 0.95rem;
+            /* Added styles for better table cell behavior */
+            word-wrap: break-word; /* Allow long words to break and wrap */
+            white-space: normal; /* Ensure text wraps within the cell */
+        }
+
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: 2px solid var(--border-color);
+            background-color: var(--table-header-bg);
+            color: var(--text-color);
+            font-weight: 600;
+            white-space: nowrap; /* Prevent headers from wrapping too much */
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: var(--table-striped-odd);
+        }
+
+        /* Make table responsive by adding overflow-x to its container */
+        .table-responsive {
+            overflow-x: auto; /* Adds horizontal scroll if content overflows */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        /* Chart Section */
+        .chart-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .chart-section canvas {
+            max-width: 100%; /* Ensure canvas is responsive */
+            height: 400px; /* Fixed height for consistency */
+            background-color: var(--input-bg); /* Chart background */
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            transition: background-color 0.4s ease;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.8rem; }
+            h3 { font-size: 1.4rem; }
+            .container { padding: 25px; }
+            .form-grid { grid-template-columns: 1fr; gap: 20px; }
+            .ticker-input-group { flex-direction: column; align-items: stretch; }
+            .btn-secondary { width: 100%; margin-top: 10px; }
+            .export-options form { display: block; margin-right: 0; margin-bottom: 15px; }
+            .export-options .btn { width: 100%; }
+            /* Adjusted table font size and padding for smaller screens */
+            .table th, .table td { font-size: 0.75rem; padding: 8px 4px; }
+            .chart-section canvas { height: 300px; }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Theme switch for dashboard header */
+        .header-tools {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Space between button and theme switch */
+        }
+
+        .redirect-button {
+            display: inline-block;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s, box-shadow 0.3s;
+            background-color: var(--button-primary-bg); 
+            color: var(--header-text);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .redirect-button:hover {
+            background-color: var(--button-primary-hover-bg);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Theme Switch (Slider) */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px; /* Slightly smaller switch */
+            height: 28px;
+        }
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; /* Smaller thumb */
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #FFA500; /* Match primary button color (Orange) */
+        }
+        input:focus + .slider {
+            box-shadow: 0 0 1px #FFA500;
+        }
+        input:checked + .slider:before {
+            -webkit-transform: translateX(22px); /* Adjusted for smaller width */
+            -ms-transform: translateX(22px);
+            transform: translateX(22px);
+        }
+        .slider.round {
+            border-radius: 34px;
+        }
+        .slider.round:before {
+            border-radius: 50%;
+        }
+        .theme-switch-wrapper em {
+            font-style: normal;
+            font-size: 0.9rem;
+            color: var(--header-text);
+        }
+        
+    </style>
+    
+</head>
+<body>
+   <header class="p-3 border-bottom">
+    <h1 class="mb-3">Advanced DRIP Calculator</h1>
+
+    <div class="d-flex flex-row align-items-center gap-3 button-group-container">
+        <a href="/" class="btn btn-info btn-sm px-3 fw-semibold">
+            Live Stock Dashboard
+        </a>
+
+        <div class="form-check form-switch d-flex align-items-center">
+            <input class="form-check-input" type="checkbox" id="checkbox" />
+            <label class="form-check-label ms-2" for="checkbox">Dark Mode</label>
+        </div>
+
+        <a href="https://tholem.pythonanywhere.com/" 
+            target="_blank" 
+            class="btn btn-info btn-sm px-3 fw-semibold">
+            Dividend Yield Calculator
+        </a>
+    </div>
+</header>
+
+<style>
+    .button-group-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        
+        /* --- ADJUSTED GAP HERE --- */
+        gap: 25px; /* Increased from 15px. Try values like 20px, 30px, etc. */
+    }
+
+    .button-group-container .form-check {
+        flex-shrink: 0; 
+    }
+</style>
+
+
+
+
+
+    
+    <div class="container">
+            <p class="text-center text-muted" style="color: var(--text-color) !important;">Simulate your investment growth with dividend reinvestment.</p>
+
+
+        {# Display any error messages from the Flask backend #}
+        {% if results %}
+            {% for result in results %}
+                {% if result.error %}
+                    <div class="alert error-message" role="alert">{{ result.error }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        <form action="/calculator" method="post">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="tickers">Select Stock Ticker(s):</label>
+                    <select class="form-control select2-multi" name="tickers" id="tickers" multiple="multiple" required>
+    {% set all_symbols = [ "AAPL", "MSFT", "GOOG", "AMZN", "NVDA", "TSLA", "IBM", "META", "JPM", "KO", "PG", "UNH", "VOO", "SPY",
+    "INTC", "PEP", "V", "MA", "DIS", "NFLX", "ADBE", "CRM", "ORCL", "CSCO", "BA", "WMT", "CVX", "XOM",
+    "BAC", "T", "NKE", "MCD", "HD", "PFE", "MRK", "ABT", "TMO", "LLY", "COST", "AVGO", "GE", "DHR",
+    "BMY", "CAT", "QCOM", "AMAT", "AMD", "FDX", "UPS", "GILD", "AXP", "DE", "BKNG", "ZTS"] %}
+    {% for symbol in all_symbols %}
+        <option value="{{ symbol }}" {% if selected_tickers and symbol in selected_tickers %}selected{% endif %}>
+            {{ symbol }}
+        </option>
+    {% endfor %}
+    {# This block adds any dynamically entered tickers that are not in the predefined list #}
+    {% if selected_tickers %}
+        {% for symbol in selected_tickers %}
+            {% if symbol not in all_symbols %}
+                <option value="{{ symbol }}" selected>{{ symbol }}</option>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</select>
+
+
+                </div>
+                <div class="form-group">
+                    <label for="initial_investment">Initial Investment ($):</label>
+                    <input type="number" class="form-control" id="initial_investment" name="initial_investment" value="{{ initial_investment | default(10000, true) }}" min="1" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="investment_years">Investment Duration (Years):</label>
+                    <input type="number" class="form-control" id="investment_years" name="investment_years" value="{{ investment_years | default(10, true) }}" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="initial_share_price">Initial Share Price ($):</label>
+                    <input type="number" class="form-control" id="initial_share_price" name="initial_share_price" value="{{ initial_share_price | default(100, true) }}" min="0.01" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="dividend_yield">Dividend Yield (%, used if data fetch fails):</label>
+                    <input type="number" class="form-control" id="dividend_yield" name="dividend_yield" value="{{ dividend_yield | default(2.5, true) }}" min="0" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="annual_dividend_growth_rate">Annual Dividend Growth Rate (%, used if data fetch fails):</label>
+                    <input type="number" class="form-control" id="annual_dividend_growth_rate" name="annual_dividend_growth_rate" value="{{ annual_dividend_growth_rate | default(5, true) }}" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="annual_stock_price_growth_rate">Annual Stock Price Growth Rate (%):</label>
+                    <input type="number" class="form-control" id="annual_stock_price_growth_rate" name="annual_stock_price_growth_rate" value="{{ annual_stock_price_growth_rate | default(7, true) }}" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>Dividend Payout Frequency:</label>
+                    <div class="radio-group">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqAnnual" value="Annual" {% if payout_frequency == 'Annual' %}checked{% endif %}>
+                            <label class="form-check-label" for="freqAnnual">Annual</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqSemiAnnual" value="Semi-Annual" {% if payout_frequency == 'Semi-Annual' %}checked{% endif %}>
+                            <label class="form-check-label" for="freqSemiAnnual">Semi-Annual</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqQuarterly" value="Quarterly" {% if payout_frequency == 'Quarterly' %}checked{% endif %}>
+                            <label class="form-check-label" for="freqQuarterly">Quarterly</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqMonthly" value="Monthly" {% if payout_frequency == 'Monthly' %}checked{% endif %}>
+                            <label class="form-check-label" for="freqMonthly">Monthly</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="drip_enabled" name="drip_enabled" value="yes" {% if drip_enabled == 'yes' %}checked{% endif %}>
+                <label class="form-check-label" for="drip_enabled">Enable Dividend Reinvestment (DRIP)</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Calculate DRIP</button>
+        </form>
+
+        {# Comparison Table for Multiple Tickers #}
+        {% if comparison_table %}
+            <div class="comparison-section">
+                <h2>Comparison of Scenarios</h2>
+                <div class="table-responsive">
+                    {{ comparison_table | safe }} {# Render the HTML table from Flask #}
+                </div>
+            </div>
+        {% endif %}
+
+        {# Individual Stock Results Section #}
+        {% if results %}
+            {% for result in results %}
+                {# Only display if there's no specific error for this ticker #}
+                {% if not result.error %}
+                    <div class="results-section">
+                        <h2>Results for {{ result.ticker }}</h2>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Current Price:</strong> {{ result.current_price }}</p>
+                                <p><strong>Annual Dividend Per Share:</strong> {{ result.annual_dividend_per_share }}</p>
+                                <p><strong>Dividend Yield:</strong> {{ result.dividend_yield }}</p>
+                                <p><strong>Payout Frequency:</strong> {{ result.payout_frequency_fetched }}</p>
+                                <p><strong>Yield on Cost:</strong> {{ result.yield_on_cost }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Initial Shares:</strong> {{ result.initial_shares }}</p>
+                                <p><strong>Estimated Final Value (No DRIP):</strong> {{ result.final_value_no_drip }}</p>
+                                <p><strong>Estimated Shares (No DRIP):</strong> {{ result.final_shares_no_drip }}</p>
+                                <p><strong>Estimated Final Value (With DRIP):</strong> {{ result.final_value_with_drip }}</p>
+                                <p><strong>Estimated Shares (With DRIP):</strong> {{ result.final_shares_with_drip }}</p>
+                            </div>
+                        </div>
+                        <p class="text-end text-muted" style="color: var(--text-color) !important;">Last Updated: {{ result.last_updated }}</p>
+
+                        {# Yearly Breakdown Table #}
+                        {% if result.yearly_breakdown_display %}
+                            <div class="yearly-breakdown-section">
+                                <h3>Yearly Breakdown for {{ result.ticker }}</h3>
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Year</th>
+                                                <th>Shares Owned (Start)</th>
+                                                <th>Stock Price (Start)</th>
+                                                <th>Annual Dividend Per Share</th>
+                                                <th>Dividends Received (Year)</th>
+                                                <th>Reinvested Shares (Year)</th>
+                                                <th>Shares Owned (End)</th>
+                                                <th>Portfolio Value (End)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for year_data in result.yearly_breakdown_display %}
+                                                <tr>
+                                                    <td>{{ year_data.Year }}</td>
+                                                    <td>{{ year_data['Shares Owned (Start)'] }}</td>
+                                                    <td>{{ year_data['Stock Price (Start)'] }}</td>
+                                                    <td>{{ year_data['Annual Dividend Per Share'] }}</td>
+                                                    <td>{{ year_data['Dividends Received (Year)'] }}</td>
+                                                    <td>{{ year_data['Reinvested Shares (Year)'] }}</td>
+                                                    <td>{{ year_data['Shares Owned (End)'] }}</td>
+                                                    <td>{{ year_data['Portfolio Value (End)'] }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                      {# Historical Price Plot (Chart.js) #}
+                        {% if result.historical_price_chart_data %}
+                            <div class="chart-section">
+                                <h3>Historical and Projected Price for {{ result.ticker }}</h3>
+                                <div class="plot-container">
+                                    <canvas id="historicalPriceChart_{{ loop.index }}"></canvas>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# DRIP Growth Plot (Chart.js) #}
+                        {% if result.drip_portfolio_value_chart_data %}
+                            <div class="chart-section">
+                                <h3>DRIP Portfolio Growth for {{ result.ticker }}</h3>
+                                <div class="plot-container">
+                                    <canvas id="dripGrowthChart_{{ loop.index }}"></canvas>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {# Export CSV and PDF buttons #}
+            {% if results and not (results|selectattr('error')|list) %}
+               <div class="export-options" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center;">
+    <h3>Export Options</h3> {# Changed heading text #}
+    <form action="/export_csv" method="POST" onsubmit="updateExportTickers()" style="margin-bottom: 10px;"> {# Added margin-bottom for spacing #}
+        <input type="hidden" name="export_tickers_hidden" id="export_tickers_hidden">
+        <input type="hidden" name="export_initial_investment" value="{{ initial_investment }}">
+        <input type="hidden" name="export_investment_years" value="{{ investment_years }}">
+        <input type="hidden" name="export_drip_enabled" value="{{ drip_enabled }}">
+        <input type="hidden" name="export_initial_share_price" value="{{ initial_share_price }}">
+        <input type="hidden" name="export_dividend_yield" value="{{ dividend_yield }}">
+        <input type="hidden" name="export_annual_dividend_growth_rate" value="{{ annual_dividend_growth_rate }}">
+        <input type="hidden" name="export_annual_stock_price_growth_rate" value="{{ annual_stock_price_growth_rate }}">
+        <input type="hidden" name="export_payout_frequency" value="{{ payout_frequency }}">
+        <button type="submit" class="btn btn-info">Download All Results as CSV</button>
+    </form>
+                    <form action="/export_pdf" method="POST" onsubmit="updateExportTickers()">
+                        <input type="hidden" name="export_tickers_hidden" id="export_tickers_hidden_pdf"> {# Use a separate ID for PDF form #}
+                        <input type="hidden" name="export_initial_investment" id="export_initial_investment_pdf" value="{{ initial_investment }}">
+                        <input type="hidden" name="export_investment_years" id="export_investment_years_pdf" value="{{ investment_years }}">
+                        <input type="hidden" name="export_drip_enabled" id="export_drip_enabled_pdf" value="{{ drip_enabled }}">
+                        <input type="hidden" name="export_initial_share_price" id="export_initial_share_price_pdf" value="{{ initial_share_price }}">
+                        <input type="hidden" name="export_dividend_yield" id="export_dividend_yield_pdf" value="{{ dividend_yield }}">
+                        <input type="hidden" name="export_annual_dividend_growth_rate" id="export_annual_dividend_growth_rate_pdf" value="{{ annual_dividend_growth_rate }}">
+                        <input type="hidden" name="export_annual_stock_price_growth_rate" id="export_annual_stock_price_growth_rate_pdf" value="{{ annual_stock_price_growth_rate }}">
+                        <input type="hidden" name="export_payout_frequency" id="export_payout_frequency_pdf" value="{{ payout_frequency }}">
+                       </form>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        // Theme switch logic (from dashboard)
+        function setDarkMode(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            setDarkMode(true);
+            document.getElementById('checkbox').checked = true;
+        }
+
+        document.getElementById('checkbox').addEventListener('change', function() {
+            setDarkMode(this.checked);
+            localStorage.setItem('theme', this.checked ? 'dark' : 'light');
+        });
+
+
+       $(document).ready(function() {
+            console.log("jQuery and DOM ready, attempting to initialize Select2..."); // Debug log
+
+            var $tickersSelect = $('#tickers');
+            $tickersSelect.select2({
+                placeholder: 'Select or type ticker symbols',
+                tags: true,
+                tokenSeparators: [',', ' '],
+                width: 'resolve'
+            });
+
+            // Re-select previously chosen tickers after form submission
+            // This handles cases where the page reloads due to validation errors
+            let selectedTickersFromFlask = [];
+            try {
+                let rawSelectedTickers = '{{ selected_tickers | tojson | safe }}';
+                // Clean up the string: if it's 'null', 'None', or empty string, make it '[]'
+                if (rawSelectedTickers === 'null' || rawSelectedTickers === 'None' || rawSelectedTickers === '') {
+                    rawSelectedTickers = '[]';
+                }
+                selectedTickersFromFlask = JSON.parse(rawSelectedTickers);
+            } catch (e) {
+                console.error("Error parsing selected_tickers from Flask:", e);
+                selectedTickersFromFlask = []; // Default to empty array on error
+            }
+            
+            // This block is for setting the selected values on the Select2, not for re-adding options.
+            // The options are already rendered by Jinja2.
+            if (Array.isArray(selectedTickersFromFlask) && selectedTickersFromFlask.length > 0) {
+                // Set the value of the Select2 and trigger change to update its display
+                $tickersSelect.val(selectedTickersFromFlask).trigger('change');
+            }
+
+            // Initialize Chart.js graphs after data is available
+            let results = [];
+            try {
+                let rawResults = '{{ results | tojson | safe }}';
+                // Clean up the string: if it's 'null', 'None', or empty string, make it '[]'
+                if (rawResults === 'null' || rawResults === 'None' || rawResults === '') {
+                    rawResults = '[]';
+                }
+                results = JSON.parse(rawResults);
+            } catch (e) {
+                console.error("Error parsing results from Flask:", e);
+                results = []; // Default to empty array on error
+            }
+            
+            // Removed maxDate for historical charts to allow projection
+
+            results.forEach((result, index) => {
+                if (!result.error) {
+                    // Historical Dividend Chart
+                    const historicalDividendCanvas = document.getElementById(`historicalDividendChart_${index + 1}`);
+                    if (historicalDividendCanvas && result.historical_dividend_chart_data && result.historical_dividend_chart_data.length > 0) {
+                        const ctxDiv = historicalDividendCanvas.getContext('2d');
+                        new Chart(ctxDiv, {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    label: 'Annual Dividend Amount ($)',
+                                    data: result.historical_dividend_chart_data, 
+                                    borderColor: 'rgb(75, 192, 192)',
+                                    tension: 0.1,
+                                    fill: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        type: 'time',
+                                        time: {
+                                            unit: 'year',
+                                            tooltipFormat: 'yyyy'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Year'
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Annual Dividend Amount ($)'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // Historical Price Chart
+                    const historicalPriceCanvas = document.getElementById(`historicalPriceChart_${index + 1}`);
+                    if (historicalPriceCanvas && result.historical_price_chart_data && result.historical_price_chart_data.length > 0) {
+                        const ctxPrice = historicalPriceCanvas.getContext('2d');
+                        new Chart(ctxPrice, {
+                            type: 'line',
+                            data: {
+                                datasets: [{
+                                    label: 'Closing Price ($)',
+                                    data: result.historical_price_chart_data, 
+                                    borderColor: 'rgb(153, 102, 255)',
+                                    tension: 0.1,
+                                    fill: false
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    x: {
+                                        type: 'time',
+                                        time: {
+                                            unit: 'year',
+                                            tooltipFormat: 'yyyy-MM-dd'
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Date'
+                                        }
+                                    },
+                                    y: {
+                                        title: {
+                                            display: true,
+                                            text: 'Closing Price ($)'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    // DRIP Growth Chart (This chart's X-axis is 'Year', not a date, so no date filtering needed)
+                    const dripGrowthCanvas = document.getElementById(`dripGrowthChart_${index + 1}`);
+                    if (dripGrowthCanvas && result.drip_portfolio_value_chart_data && result.drip_portfolio_value_chart_data.length > 0) {
+                        const ctxDrip = dripGrowthCanvas.getContext('2d');
+                        new Chart(ctxDrip, {
+                            type: 'line',
+                            data: {
+                                datasets: [
+                                    {
+                                        label: 'Portfolio Value ($)',
+                                        data: result.drip_portfolio_value_chart_data,
+                                        borderColor: 'rgb(54, 162, 235)',
+                                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                        tension: 0.1,
+                                        fill: true,
+                                        yAxisID: 'y'
+                                    },
+                                    {
+                                        label: 'Shares Owned',
+                                        data: result.drip_shares_owned_chart_data,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                        tension: 0.1,
+                                        fill: false,
+                                        yAxisID: 'y1'
+                                    }
+                                ]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                stacked: false,
+                                scales: {
+                                    x: {
+                                        type: 'linear', // Use linear for years (1, 2, 3...)
+                                        title: {
+                                            display: true,
+                                            text: 'Year'
+                                        },
+                                        ticks: {
+                                            stepSize: 1 // Ensure integer years are shown
+                                        }
+                                    },
+                                    y: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'left',
+                                        title: {
+                                            display: true,
+                                            text: 'Portfolio Value ($)'
+                                        }
+                                    },
+                                    y1: {
+                                        type: 'linear',
+                                        display: true,
+                                        position: 'right',
+                                        title: {
+                                            display: true,
+                                            text: 'Shares Owned'
+                                        },
+                                        grid: {
+                                            drawOnChartArea: false, // Only draw grid lines for the first y-axis
+                                        },
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+        // Function to update the hidden input with selected tickers before CSV and PDF export
+        function updateExportTickers() {
+            var selectedTickers = $('#tickers').val();
+            var tickersString = selectedTickers ? selectedTickers.join(',') : '';
+            
+            // Update both hidden fields
+            $('#export_tickers_hidden').val(tickersString);
+            $('#export_tickers_hidden_pdf').val(tickersString);
+
+            // Update other hidden fields for PDF export form
+            $('#export_initial_investment_pdf').val($('#initial_investment').val());
+            $('#export_investment_years_pdf').val($('#investment_years').val());
+            $('#export_drip_enabled_pdf').val($('#drip_enabled').is(':checked') ? 'yes' : 'no');
+            $('#export_initial_share_price_pdf').val($('#initial_share_price').val());
+            $('#export_dividend_yield_pdf').val($('#dividend_yield').val());
+            $('#export_annual_dividend_growth_rate_pdf').val($('#annual_dividend_growth_rate').val());
+            $('#export_annual_stock_price_growth_rate_pdf').val($('#annual_stock_price_growth_rate').val());
+            $('#export_payout_frequency_pdf').val($('input[name="payout_frequency"]:checked').val());
+        }
+    </script>
+    
+</body>
+</html>

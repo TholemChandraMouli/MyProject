@@ -1,0 +1,918 @@
+/* ==================================== */
+/* 1. CSS Variables and Defaults */
+/* ==================================== */
+
+/* Light Mode Variables (Default - tailored for Black & Orange) */
+:root {
+    /* Fonts */
+    --font-primary: 'Inter', sans-serif; /* Modern, clean sans-serif */
+    --font-secondary: 'Montserrat', sans-serif; /* A slightly bolder font for headings/accents */
+
+    /* General & Base Colors */
+    --background-color: #1a1a1a; /* Deep charcoal black background */
+    --text-color: #f0f0f0; /* Soft white for readability on dark background */
+    --header-bg: #000000; /* Pure black header */
+    --header-text: #ffffff; /* Pure white */
+    --border-color: #333333; /* Dark grey for subtle borders */
+    --link-color: #ff8c00; /* Vibrant Orange for links */
+    --link-hover-color: #e67300; /* Slightly darker orange on hover */
+    --positive-color: #4CAF50; /* Standard green for positive values */
+    --negative-color: #FF5722; /* Bright red-orange for negative values */
+    --info-color: #FFC107; /* Amber for info/warning */
+    --loading-color: #a0a0a0; /* Medium grey for loading states */
+    
+    /* Global Component Styles */
+    --card-bg: #222222; /* Slightly lighter black for card backgrounds */
+    --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.4); /* Pronounced, dark shadow */
+    --focus-ring-color: rgba(255, 140, 0, 0.4); /* Orange focus ring */
+
+    /* Calculator Specifics */
+    --calc-container-bg: #222222; /* Consistent with card background */
+    --calc-heading-color: #ff8c00; /* Vibrant Orange for headings */
+    --calc-input-bg: #333333; /* Dark grey for inputs */
+    --calc-input-border: #555555; /* Lighter grey for input borders */
+    --calc-button-primary: #ff8c00; /* Vibrant Orange for main actions */
+    --calc-button-primary-dark: #e67300; /* Darker orange for hover */
+    --calc-button-secondary: #606060; /* Muted dark grey for secondary actions */
+    --calc-button-secondary-hover: #505050;
+    --calc-table-header-bg: #333333; /* Dark grey for table headers */
+    --calc-table-striped-odd: #2a2a2a; /* Slightly darker stripe */
+    --calc-error-bg: #5c0000; /* Dark red for errors */
+    --calc-error-text: #ffe0b2; /* Light peach text for errors */
+}
+
+/* Dark Mode Variables (Subtle variation of Black & Orange for contrast) */
+body.dark-mode {
+    /* General & Base Colors */
+    --background-color: #0d0d0d; /* Even darker black */
+    --text-color: #f5f5f5; /* Pure white for text */
+    --header-bg: #000000; /* Consistent pure black */
+    --header-text: #ffffff;
+    --border-color: #444444; /* Slightly darker borders */
+    --link-color: #ffa500; /* Brighter orange for dark mode links */
+    --link-hover-color: #e69500;
+    --positive-color: #66BB6A; /* Slightly brighter green */
+    --negative-color: #FF7043; /* Slightly brighter red-orange */
+    --info-color: #FFD54F; /* Slightly brighter amber */
+    --loading-color: #bbbbbb;
+
+    /* Global Component Styles */
+    --card-bg: #111111; /* Darkest black for card backgrounds */
+    --card-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); /* More intense shadow */
+    --focus-ring-color: rgba(255, 165, 0, 0.3);
+
+    /* Calculator Specifics */
+    --calc-container-bg: #111111;
+    --calc-heading-color: #ffa500; /* Brighter orange for headings */
+    --calc-input-bg: #2a2a2a; /* Slightly darker inputs */
+    --calc-input-border: #666666;
+    --calc-button-primary: #ffa500;
+    --calc-button-primary-dark: #e69500;
+    --calc-button-secondary: #707070;
+    --calc-button-secondary-hover: #606060;
+    --calc-table-header-bg: #2a2a2a;
+    --calc-table-striped-odd: #181818;
+    --calc-error-bg: #7f0000; /* Darker red */
+    --calc-error-text: #ffccbc; /* Lighter red text */
+}
+
+/* ==================================== */
+/* 2. Base Styles & Typography */
+/* ==================================== */
+
+body {
+    font-family: var(--font-primary);
+    margin: 0;
+    padding: 2.5rem; /* Increased padding around the body */
+    line-height: 1.6;
+    transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out; /* Smoother transitions */
+    background-color: var(--background-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
+h1, h2, h3 {
+    font-family: var(--font-secondary); /* Use secondary font for headings */
+    color: var(--calc-heading-color); /* Use specific calc heading color for consistency */
+    font-weight: 700;
+    margin-bottom: 2rem; /* Consistent bottom margin */
+    text-align: center;
+    transition: color 0.4s ease-in-out;
+    letter-spacing: -0.03em; /* Tighter letter spacing for headings for premium feel */
+}
+
+body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 {
+    color: var(--calc-heading-color); /* Ensure dark mode headings are consistent */
+}
+
+h1 { font-size: 3.5rem; margin-bottom: 1.5rem; } /* More impactful main title */
+h2 { font-size: 2.8rem; margin-top: 3.5rem; } /* Generous top margin */
+h3 { font-size: 2.2rem; margin-top: 2.5rem; color: var(--link-color); } /* Emphasized section titles */
+
+p {
+    font-size: 1.1rem;
+    line-height: 1.8; /* Increased line height for readability */
+    margin-bottom: 1.25rem; /* More space below paragraphs */
+    color: var(--text-color);
+}
+
+/* ==================================== */
+/* 3. Dashboard Layout & Components */
+/* ==================================== */
+
+/* Header */
+header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 1.75rem 2.5rem; /* Increased padding for a grander feel */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.5); /* Stronger, more refined shadow */
+    width: 100%;
+    max-width: 1400px; /* Wider header */
+    border-radius: 1.25rem; /* Rounded corners for the header */
+    margin-bottom: 3.5rem; /* More space below header */
+    position: relative;
+    z-index: 100; /* Ensure header is on top */
+}
+
+header h1 {
+    margin: 0; /* Reset margin */
+    font-size: 2.2rem; /* Adjust header h1 size */
+    color: var(--header-text); /* Ensure header text is white */
+    text-align: left; /* Align to left */
+    letter-spacing: -0.04em; /* Tighter for header title */
+}
+
+/* Theme Switch (Slider) */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Consistent gap */
+    font-size: 1rem;
+    color: var(--header-text);
+    font-weight: 500;
+}
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 70px; /* Wider switch */
+    height: 36px; /* Taller switch */
+}
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #555; /* Dark grey for off state */
+    transition: 0.4s ease-in-out;
+    border-radius: 36px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); /* Inset shadow for depth */
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 28px; /* Larger handle */
+    width: 28px;
+    left: 4px;
+    bottom: 4px;
+    background-color: #ffffff; /* White handle */
+    transition: 0.4s ease-in-out;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* Handle shadow */
+}
+input:checked + .slider {
+    background-color: var(--link-color); /* Orange for on state */
+}
+input:focus + .slider {
+    box-shadow: 0 0 0 4px var(--focus-ring-color); /* More prominent focus */
+}
+input:checked + .slider:before {
+    transform: translateX(34px); /* Adjusted translation for wider switch */
+}
+.slider.round {
+    border-radius: 36px;
+}
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Stock Grid */
+.stock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Larger cards */
+    gap: 2.5rem; /* Increased gap */
+    padding: 2.5rem; /* Consistent padding */
+    max-width: 1400px; /* Wider max width */
+    margin: 2.5rem auto; /* Consistent margin */
+}
+
+/* Stock Card */
+.stock-card {
+    background-color: var(--card-bg);
+    border-radius: 1.25rem; /* More rounded corners */
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s; /* Smoother, more distinct transition */
+    border: 1px solid var(--border-color);
+    overflow: hidden; /* Ensures border-radius on children */
+}
+
+.stock-card:hover {
+    transform: translateY(-0.75rem); /* More pronounced lift */
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5); /* Stronger hover shadow */
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    padding: 1.75rem; /* Increased padding */
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(255,140,0,0.05); /* Subtle orange tint for header */
+    border-top-left-radius: 1.25rem;
+    border-top-right-radius: 1.25rem;
+    gap: 1.25rem; /* Space between logo and text */
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.8rem; /* Larger font */
+    color: var(--text-color);
+    text-align: left;
+    letter-spacing: -0.02em;
+    flex-grow: 1; /* Allows title to take available space */
+}
+
+.stock-symbol {
+    font-size: 1.1rem; /* Slightly larger */
+    color: var(--loading-color); /* Muted color for symbol */
+    margin: 0;
+    font-weight: 500;
+}
+
+.company-logo {
+    width: 50px; /* Larger logo */
+    height: 50px; /* Larger logo */
+    border-radius: 50%;
+    object-fit: contain;
+    border: 2px solid var(--link-color); /* Orange border for logo */
+    background-color: #ffffff; /* White background for logo */
+    flex-shrink: 0; /* Prevent shrinking */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.card-body {
+    padding: 1.75rem; /* Increased padding */
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.current-price {
+    font-size: 3.2rem; /* Larger price font */
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    letter-spacing: -0.04em;
+}
+
+.price-change {
+    font-size: 1.4rem; /* Larger font */
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Price colors */
+.positive {
+    color: var(--positive-color);
+}
+
+.negative {
+    color: var(--negative-color);
+}
+
+.price-details {
+    width: 100%; /* Ensure details section takes full width */
+    text-align: left;
+    margin-top: 1rem;
+}
+
+.price-details p {
+    margin: 0.5rem 0;
+    font-size: 1.05rem; /* Slightly larger */
+    color: var(--text-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px dashed rgba(255,255,255,0.05); /* Subtle dashed separator */
+}
+
+.price-details p:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.price-details strong {
+    font-weight: 600; /* Bolder for labels */
+    color: var(--link-color); /* Highlight key labels */
+}
+
+.price-details span {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.card-footer {
+    padding: 1.5rem 1.75rem; /* Increased padding */
+    border-top: 1px solid var(--border-color);
+    background-color: rgba(255,140,0,0.02); /* Very subtle tint */
+    border-bottom-left-radius: 1.25rem;
+    border-bottom-right-radius: 1.25rem;
+    display: flex;
+    justify-content: flex-end; /* Align timestamp to the right */
+}
+
+.timestamp {
+    font-size: 0.9rem;
+    color: #9aa5b1; /* Muted timestamp color */
+    text-align: right;
+    font-style: italic;
+}
+
+#datetime {
+    text-align: center;
+    padding: 1.25rem 0; /* Increased padding */
+    font-size: 1.25rem; /* Larger font */
+    color: var(--text-color);
+    background-color: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2.5rem; /* Space below datetime */
+}
+
+.loading-message {
+    text-align: center;
+    grid-column: 1 / -1; /* Span across all columns */
+    padding: 4rem; /* Increased padding */
+    font-size: 1.6rem; /* Larger font */
+    color: var(--loading-color);
+    font-weight: 600;
+    animation: pulse 1.5s infinite ease-in-out; /* Pulsing animation */
+}
+
+.error-message {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding: 2.5rem; /* Increased padding */
+    font-size: 1.4rem; /* Larger font */
+    color: var(--calc-error-text);
+    background-color: var(--calc-error-bg);
+    border: 2px solid var(--calc-error-text);
+    border-radius: 1rem; /* More rounded */
+    margin: 2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+}
+
+/* ==================================== */
+/* 4. Calculator Layout & Components */
+/* ==================================== */
+
+.container {
+    margin: 4rem auto; /* Increased vertical margin */
+    background-color: var(--calc-container-bg);
+    border-radius: 1.5rem; /* More rounded */
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); /* More impactful shadow */
+    padding: 3.5rem; /* Generous padding */
+    max-width: 1200px; /* Wider container */
+    transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.form-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Slightly wider columns */
+    gap: 2rem; /* Increased gap */
+}
+
+.form-group {
+    margin-bottom: 0; /* Reset margin, grid handles spacing */
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-color);
+    font-size: 1.05rem;
+}
+
+.form-control {
+    border-radius: 0.75rem; /* More rounded */
+    border: 1px solid var(--calc-input-border);
+    padding: 1rem 1.2rem; /* Increased padding */
+    background-color: var(--calc-input-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+    font-size: 1.05rem;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.form-control:focus {
+    border-color: var(--calc-button-primary); /* Use primary button color for focus */
+    box-shadow: 0 0 0 0.3rem var(--focus-ring-color); /* More prominent shadow */
+    outline: none;
+}
+
+/* Select2 customization */
+.select2-container--default .select2-selection--multiple {
+    background-color: var(--calc-input-bg) !important;
+    border: 1px solid var(--calc-input-border) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.6rem 0.8rem !important; /* Adjust padding to match other inputs */
+    min-height: 3.2rem; /* Ensure consistent height with larger inputs */
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: var(--calc-button-primary) !important;
+    box-shadow: 0 0 0 0.3rem var(--focus-ring-color) !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--link-color) !important; /* Use a distinct color for tags */
+    color: #ffffff !important;
+    border: 1px solid var(--link-color) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.4rem 0.8rem !important;
+    margin-top: 0.3rem !important;
+    margin-right: 0.5rem !important;
+    font-size: 0.95rem !important;
+    font-weight: 500;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #ffffff !important;
+    margin-right: 0.4rem !important;
+    font-size: 1.1rem !important;
+    cursor: pointer;
+}
+
+.select2-container--default .select2-search--inline .select2-search__field {
+    color: var(--text-color) !important;
+    height: 2.5rem !important;
+    margin-top: 0.3rem !important;
+    font-size: 1.05rem !important;
+}
+
+.select2-dropdown {
+    background-color: var(--calc-input-bg) !important;
+    border: 1px solid var(--calc-input-border) !important;
+    border-radius: 0.75rem !important;
+    box-shadow: var(--card-shadow);
+    z-index: 1050;
+    overflow: hidden;
+}
+
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--link-color) !important;
+    color: white !important;
+}
+
+.select2-container--default .select2-results__option {
+    color: var(--text-color) !important;
+    padding: 0.9rem 1.2rem !important;
+    font-size: 1rem !important;
+}
+
+/* Radio buttons */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem; /* Increased gap */
+    margin-top: 0.75rem;
+}
+.form-check-inline {
+    margin-right: 0; /* Let gap handle spacing */
+}
+.form-check-input {
+    margin-top: 0.25rem;
+    width: 1.25em; /* Larger radio/checkbox */
+    height: 1.25em;
+    accent-color: var(--calc-button-primary);
+    cursor: pointer;
+}
+.form-check-label {
+    color: var(--text-color);
+    font-size: 1.05rem;
+    margin-left: 0.6rem; /* More space between input and label */
+    cursor: pointer;
+}
+.form-check-input:checked + .form-check-label {
+    font-weight: 600;
+    color: var(--link-color); /* Highlight checked label */
+}
+
+/* Checkbox */
+.form-check-label[for="drip_enabled"] {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.form-check-input[type="checkbox"] {
+    border-radius: 0.35rem; /* Slightly more rounded checkbox */
+    accent-color: var(--calc-button-primary);
+}
+
+/* Buttons */
+.btn {
+    padding: 1rem 2rem; /* Generous padding */
+    font-size: 1.15rem; /* Larger font size */
+    border-radius: 0.85rem; /* Rounded buttons */
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem; /* Space between text and icon */
+    letter-spacing: 0.02em;
+}
+
+.btn-primary {
+    background-color: var(--calc-button-primary);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    width: 100%;
+    margin-top: 2.5rem; /* Space above primary button */
+}
+
+.btn-primary:hover {
+    background-color: var(--calc-button-primary-dark);
+    transform: translateY(-0.25rem); /* Subtle lift */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary { /* For Toggle Dark Mode button on calculator */
+    background-color: var(--calc-button-secondary);
+    color: white;
+    padding: 0.9rem 1.5rem;
+    font-size: 1.05rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    margin-bottom: 1.5rem; /* Space below button */
+}
+
+.btn-secondary:hover {
+    background-color: var(--calc-button-secondary-hover);
+    transform: translateY(-0.15rem);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.export-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 3rem; /* Space from results */
+}
+
+.export-options form {
+    display: inline-block;
+    margin: 0;
+}
+
+.export-options .btn {
+    width: auto;
+    margin-top: 0;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    border-radius: 0.6rem;
+}
+
+.btn-info { /* CSV button */
+    background-color: var(--info-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.btn-info:hover {
+    background-color: #e0a800; /* Darker yellow */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.btn-success { /* PDF button */
+    background-color: var(--positive-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.btn-success:hover {
+    background-color: #218838; /* Darker green */
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+
+/* Results Section */
+.results-section, .chart-section, .comparison-section, .yearly-breakdown-section { /* Added yearly-breakdown-section */
+    margin-top: 3.5rem; /* Increased margin */
+    padding: 2.5rem; /* Increased padding */
+    border: 1px solid var(--border-color);
+    border-radius: 1.25rem; /* More rounded */
+    background-color: var(--card-bg);
+    box-shadow: var(--card-shadow);
+    transition: background-color 0.4s ease-in-out, border-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+    animation: fadeIn 0.8s ease-out; /* Fade-in animation */
+}
+
+.results-section h3, .comparison-section h2, .chart-section h3, .yearly-breakdown-section h3 { /* Consistent heading style */
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2rem; /* More space below section titles */
+    color: var(--calc-heading-color);
+    transition: color 0.4s ease-in-out;
+    font-weight: 700;
+}
+
+body.dark-mode .results-section h3, body.dark-mode .comparison-section h2, body.dark-mode .chart-section h3, body.dark-mode .yearly-breakdown-section h3 {
+    color: var(--calc-heading-color);
+}
+
+.results-section p {
+    margin-bottom: 0.75rem; /* Space between result lines */
+    font-size: 1.1rem;
+    color: var(--text-color);
+}
+
+.results-section p strong {
+    color: var(--link-color); /* Highlight key result labels */
+    transition: color 0.4s ease-in-out;
+    font-weight: 600;
+}
+body.dark-mode .results-section p strong {
+    color: var(--link-color);
+}
+
+.results-section .text-end {
+    font-size: 0.95rem;
+    color: #9aa5b1;
+    margin-top: 1.5rem; /* Space above update text */
+    font-style: italic;
+}
+
+/* Error message styling for calculator */
+.alert.error-message { /* Using .alert to be specific if Bootstrap is present */
+    color: var(--calc-error-text);
+    background-color: var(--calc-error-bg);
+    border: 2px solid var(--calc-error-text);
+    padding: 1.25rem; /* Increased padding */
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem; /* Space below error */
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+/* Table styling (for comparison and yearly breakdown) */
+.table {
+    width: 100%;
+    margin-bottom: 2rem;
+    color: var(--text-color);
+    border-collapse: separate; /* Use separate for rounded corners */
+    border-spacing: 0;
+    border-radius: 1rem; /* More rounded table */
+    overflow: hidden; /* Ensures border-radius applies to table */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Subtle table shadow */
+    transition: color 0.4s ease-in-out;
+}
+
+.table th,
+.table td {
+    padding: 1.1rem 0.8rem; /* Consistent padding */
+    vertical-align: middle;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    font-size: 0.95rem;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid var(--border-color);
+    background-color: var(--calc-table-header-bg); /* Use specific table header color */
+    color: var(--text-color);
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--calc-table-striped-odd);
+}
+
+/* Ensure text color for table cells in dark mode */
+body.dark-mode .table tbody td {
+    color: var(--text-color);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 1rem; /* Apply border-radius to responsive wrapper too */
+}
+
+/* Chart Section */
+.chart-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 4rem;
+}
+
+.chart-section canvas {
+    max-width: 100%;
+    height: 550px; /* Taller charts for better detail */
+    background-color: var(--calc-input-bg); /* Use input background for chart area */
+    border-radius: 1rem;
+    padding: 1.5rem; /* Padding inside canvas container */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.2); /* Subtle inset shadow */
+    transition: background-color 0.4s ease-in-out;
+}
+
+/* --- header tools for the dashboard section --- */
+.header-tools {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem; /* Increased space between button and theme switch */
+    flex-wrap: wrap; /* Allow wrapping */
+    justify-content: flex-end; /* Align items to the right in header */
+}
+
+.redirect-button {
+    display: inline-block;
+    padding: 0.85rem 1.5rem; /* Generous padding */
+    text-decoration: none;
+    border-radius: 0.75rem; /* More rounded */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    background-color: var(--link-color); /* Use link color for dashboard button */
+    color: var(--header-text);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2); /* Subtle shadow */
+    white-space: nowrap;
+    font-size: 1rem;
+}
+
+.redirect-button:hover {
+    background-color: var(--link-hover-color);
+    transform: translateY(-0.25rem);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Intro paragraph styling */
+.container p.text-center.text-muted {
+    font-size: 1.15rem;
+    margin-bottom: 2.5rem;
+    color: var(--text-color) !important;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ==================================== */
+/* 5. Responsive Adjustments */
+/* ==================================== */
+
+@media (max-width: 1200px) {
+    body { padding: 2rem; }
+    h1 { font-size: 3rem; }
+    h2 { font-size: 2.4rem; }
+    h3 { font-size: 2rem; }
+    .container { padding: 3rem; max-width: 1000px; }
+    .stock-grid { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; padding: 2rem; }
+    .card-header h2 { font-size: 1.6rem; }
+    .current-price { font-size: 2.8rem; }
+    .price-change { font-size: 1.3rem; }
+    .chart-section canvas { height: 480px; }
+}
+
+@media (max-width: 992px) {
+    body { padding: 1.5rem; }
+    h1 { font-size: 2.5rem; margin-bottom: 1.25rem; }
+    h2 { font-size: 2.1rem; margin-top: 3rem; }
+    h3 { font-size: 1.7rem; margin-top: 2rem; }
+    header { padding: 1.25rem 2rem; flex-direction: column; text-align: center; gap: 1rem; }
+    header h1 { font-size: 1.8rem; margin-bottom: 0.75rem; }
+    .header-tools { justify-content: center; width: 100%; margin-top: 1rem; }
+    .container { padding: 2.5rem; }
+    .form-layout { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .btn-primary { padding: 0.9rem 1.8rem; font-size: 1.1rem; }
+    .btn-secondary { padding: 0.8rem 1.4rem; font-size: 1rem; }
+    .export-options { gap: 1rem; margin-top: 2.5rem; }
+    .export-options .btn { padding: 0.7rem 1.2rem; font-size: 0.9rem; }
+    .results-section, .chart-section, .comparison-section, .yearly-breakdown-section { padding: 2rem; margin-top: 2.5rem; }
+    .results-section h3, .comparison-section h2, .chart-section h3, .yearly-breakdown-section h3 { margin-bottom: 1.5rem; }
+    .table th, .table td { padding: 0.9rem 0.6rem; font-size: 0.9rem; }
+    .chart-section canvas { height: 380px; padding: 1rem; }
+    .stock-grid { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.5rem; }
+    .company-logo { width: 40px; height: 40px; margin-right: 15px; }
+    .card-header h2 { font-size: 1.5rem; }
+    .current-price { font-size: 2.5rem; }
+    .price-change { font-size: 1.2rem; }
+    .price-details p { font-size: 1.05rem; }
+}
+
+@media (max-width: 768px) {
+    body { padding: 1rem; }
+    h1 { font-size: 2rem; margin-bottom: 1rem; }
+    h2 { font-size: 1.8rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.5rem; margin-top: 1.5rem; }
+    header { padding: 1rem 1.5rem; }
+    header h1 { font-size: 1.6rem; }
+    .theme-switch { width: 60px; height: 30px; }
+    .slider:before { height: 22px; width: 22px; left: 4px; bottom: 4px; }
+    input:checked + .slider:before { transform: translateX(26px); }
+    .container { padding: 2rem; margin: 2rem auto; }
+    .form-layout { grid-template-columns: 1fr; gap: 1rem; }
+    .ticker-input-group { flex-direction: column; align-items: stretch; }
+    .btn-primary { padding: 0.8rem 1.5rem; font-size: 1rem; }
+    .btn-secondary { padding: 0.7rem 1.2rem; font-size: 0.9rem; margin-bottom: 1rem; }
+    .export-options { flex-direction: column; align-items: stretch; gap: 0.75rem; margin-top: 2rem; }
+    .export-options .btn { width: 100%; }
+    .results-section, .chart-section, .comparison-section, .yearly-breakdown-section { padding: 1.5rem; margin-top: 2rem; }
+    .results-section h3, .comparison-section h2, .chart-section h3, .yearly-breakdown-section h3 { margin-bottom: 1rem; }
+    .table th, .table td { padding: 0.7rem 0.5rem; font-size: 0.8rem; }
+    .chart-section canvas { height: 280px; padding: 0.8rem; }
+    .stock-card { border-radius: 1rem; }
+    .card-header, .card-body, .card-footer { padding: 1rem; }
+    .current-price { font-size: 2.2rem; }
+    .price-change { font-size: 1rem; }
+    .price-details p { font-size: 0.95rem; }
+}
+
+/* ==================================== */
+/* 6. Animations */
+/* ==================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
+}
+
+/* Ensure dark mode styles are applied correctly */
+body.dark-mode .select2-container--default .select2-selection--multiple {
+    background-color: var(--calc-input-bg) !important;
+    border: 1px solid var(--calc-input-border) !important;
+}
+
+body.dark-mode .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--link-color) !important;
+    color: var(--header-text) !important;
+    border: 1px solid var(--link-color) !important;
+}
+
+body.dark-mode .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: var(--header-text) !important;
+}
+
+body.dark-mode .select2-container--default .select2-results__option--highlighted.select2-results__option--selectable {
+    background-color: var(--link-color) !important;
+    color: white !important;
+}
+
+body.dark-mode .select2-container--default .select2-results__option {
+    color: var(--text-color) !important;
+}
+
+body.dark-mode .select2-dropdown {
+    background-color: var(--calc-input-bg) !important;
+    border: 1px solid var(--calc-input-border) !important;
+}
